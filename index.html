@@ -1,0 +1,205 @@
+# unoccupied-rooms
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Room Selector</title>
+  <style>
+    
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #90caf9;
+    }
+
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #e3f2fd;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #1565c0;
+    }
+
+    form {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+
+    form div {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #1565c0;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #cccccc;
+    }
+
+    button {
+      background-color: #1565c0;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0d47a1;
+    }
+
+    #rooms {
+      margin-top: 20px;
+      text-align: left;
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    ul {
+      padding: 0;
+      list-style-type: none;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    p {
+      color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Academic Room Selector</h1>
+    <form id="room-form">
+      <div>
+        <label for="block">Academic Block:</label>
+        <select id="block">
+          <option value="">Select Block</option>
+          <option value="CB">CB</option>
+          <option value="AB-1">AB-1</option>
+          <option value="AB-2">AB-2</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="weekday">Weekday:</label>
+        <select id="weekday">
+          <option value="">Select Weekday</option>
+  
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="time-slot">Time Slot:</label>
+        <select id="time-slot">
+          <option value="">Select Time Slot</option>
+          <option value="08:00 - 09:00">08:00 - 09:00</option>
+          <option value="09:00 - 10:00">09:00 - 10:00</option>
+          <option value="10:00 - 11:00">10:00 - 11:00</option>
+          <option value="11:00 - 12:00">11:00 - 12:00</option>
+          <option value="12:00 - 13:00">12:00 - 13:00</option>
+          <option value="13:00 - 14:00">13:00 - 14:00</option>
+          <option value="14:00 - 15:00">14:00 - 15:00</option>
+          <option value="15:00 - 16:00">15:00 - 16:00</option>
+          <option value="16:00 - 17:00">16:00 - 17:00</option>
+        </select>
+      </div>
+
+      <button type="submit">Check Available Rooms</button>
+    </form>
+
+    <div id="loading" style="display: none;">Loading available rooms...</div>
+    <div id="rooms"></div>
+  </div>
+
+  <script>
+    // JavaScript Logic
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById('room-form');
+      const roomsContainer = document.getElementById('rooms');
+      const loadingIndicator = document.getElementById('loading');
+
+      // Mock data for available rooms
+      const mockRooms = {
+        'CB': {
+          Saturday: {
+            '09:00 - 10:00': ['A101', 'A102'],
+            '10:00 - 11:00': ['A103'],
+          },
+          Tuesday: {
+            '11:00 - 12:00': ['A201', 'A202'],
+          }
+        },
+        'AB-1': {
+          Wednesday: {
+            '09:00 - 10:00': ['B101', 'B102'],
+            '10:00 - 11:00': ['B103'],
+          }
+        },
+        'AB-2': {
+          Thursday: {
+            '13:00 - 14:00': ['C301', 'C302'],
+            '14:00 - 15:00': ['C303'],
+          }
+        }
+      };
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        
+        // Get form values
+        const block = document.getElementById('block').value;
+        const weekday = document.getElementById('weekday').value;
+        const timeSlot = document.getElementById('time-slot').value;
+
+        if (!block || !weekday || !timeSlot) {
+          alert('Please select all fields.');
+          return;
+        }
+
+        // Show loading indicator
+        loadingIndicator.style.display = 'block';
+        roomsContainer.innerHTML = '';
+
+        // Simulate a delay for fetching available rooms (mimicking a backend call)
+        setTimeout(() => {
+          loadingIndicator.style.display = 'none';
+
+          const availableRooms = mockRooms[block]?.[weekday]?.[timeSlot] || [];
+          
+          if (availableRooms.length > 0) {
+            roomsContainer.innerHTML = `<h3>Available Rooms:</h3><ul>${availableRooms.map(room => `<li>${room}</li>`).join('')}</ul>`;
+          } else {
+            roomsContainer.innerHTML = '<p>No available rooms found.</p>';
+          }
+        }, 1000); // Simulate 1 second delay
+      });
+    });
+  </script>
+</body>
+</html>
